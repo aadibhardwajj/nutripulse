@@ -5,13 +5,19 @@ let cachedPromise = null;
 let memoryServer = null;
 
 const connectDB = async () => {
-  if (cachedConnection && mongoose.connection.readyState === 1) {
-    return cachedConnection;
+  // If already connected, reuse existing connection
+  if (mongoose.connection.readyState === 1) {
+    return mongoose.connection;
   }
 
-  if (cachedPromise) {
-    return cachedPromise;
+  // If currently in the process of connecting, wait for it
+  if (mongoose.connection.readyState === 2 && cachedPromise) {
+    return await cachedPromise;
   }
+
+  // Otherwise reset stale cache
+  cachedPromise = null;
+  cachedConnection = null;
 
   const mongoURI = process.env.MONGODB_URI;
   const isProduction = process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
@@ -35,12 +41,11 @@ const connectDB = async () => {
   try {
     if (mongoURI && !mongoURI.includes('<username>')) {
       console.log('Connecting to MongoDB Atlas / Remote database...');
-      cachedPromise = mongoose.connect(mongoURI, connectionOptions).then((conn) => {
-        cachedConnection = conn;
-        console.log(`MongoDB Connected: ${conn.connection.host}`);
-        return conn;
-      });
-      return await cachedPromise;
+      cachedPromise = mongoose.connect(mongoURI, connectionOptions);
+      const conn = await cachedPromise;
+      cachedConnection = conn;
+      console.log(`MongoDB Connected: ${conn.connection.host}`);
+      return conn;
     }
 
     // Fallback ONLY for explicitly local offline development

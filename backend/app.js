@@ -66,16 +66,35 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/api', apiLimiter);
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
-  const isDbConnected = mongoose.connection.readyState === 1;
+app.get('/api/health', async (req, res) => {
+  let isDbConnected = mongoose.connection.readyState === 1;
+  let connectionError = null;
+
+  if (!isDbConnected) {
+    try {
+      const { connectDB } = require('./config/db');
+      await connectDB();
+      isDbConnected = mongoose.connection.readyState === 1;
+    } catch (err) {
+      connectionError = err.message;
+    }
+  }
+
+  const readyState = mongoose.connection.readyState;
+  const states = { 0: 'disconnected', 1: 'connected', 2: 'connecting', 3: 'disconnecting' };
   const status = isDbConnected ? 200 : 503;
+
   return res.status(status).json({
     success: isDbConnected,
     data: {
       api: 'ok',
-      database: isDbConnected ? 'connected' : 'disconnected',
+      database: states[readyState] || 'unknown',
+      readyState,
+      hasMongoUri: Boolean(process.env.MONGODB_URI),
+      host: mongoose.connection.host || null,
+      error: connectionError,
     },
-    message: isDbConnected ? 'API is healthy' : 'Database is disconnected or unavailable',
+    message: isDbConnected ? 'API is healthy' : (connectionError || 'Database is disconnected or unavailable'),
   });
 });
 
