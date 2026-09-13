@@ -12,6 +12,7 @@ module.exports = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: 'Database connection failed in serverless function',
+      error: error.message,
       code: 'DATABASE_CONNECTION_ERROR',
     });
   }
