@@ -47,13 +47,15 @@ const runVerification = async () => {
   console.log(`[1] Health Check: Status ${health.status} -> ${health.data?.message}`);
   if (health.status !== 200) throw new Error('Health check failed');
 
-  // 2. Authentication Login
-  const loginRes = await request('/api/auth/login', 'POST', {
-    email: 'demo@nutripulse.com',
+  // 2. Authentication Register & Login
+  const testEmail = `test_${Date.now()}@nutripulse.local`;
+  const regRes = await request('/api/auth/register', 'POST', {
+    name: 'Alex Rivera',
+    email: testEmail,
     password: 'Password123!',
   });
-  console.log(`[2] Auth Login: Status ${loginRes.status} -> Success: ${loginRes.data?.success}`);
-  const token = loginRes.data?.data?.token;
+  console.log(`[2] Auth Register: Status ${regRes.status} -> Success: ${regRes.data?.success}`);
+  const token = regRes.data?.data?.token;
   if (!token) throw new Error('Failed to obtain JWT auth token');
 
   // 3. Current User Verification

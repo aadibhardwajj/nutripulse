@@ -56,14 +56,16 @@ const runSecurityTests = async () => {
     throw new Error('API 404 did not return structured JSON response');
   }
 
-  // 3. Login Demo User
-  const login = await request('/api/auth/login', 'POST', {
-    email: 'demo@nutripulse.com',
+  // 3. Register User A
+  const userAEmail = `user_a_${Date.now()}@nutripulse.local`;
+  const regA = await request('/api/auth/register', 'POST', {
+    name: 'User A',
+    email: userAEmail,
     password: 'Password123!',
   });
-  const token = login.data?.data?.token;
-  console.log(`[Test 3] Demo Login: status ${login.status}, token obtained`);
-  if (!token) throw new Error('Demo login failed');
+  const token = regA.data?.data?.token;
+  console.log(`[Test 3] User A Registered: status ${regA.status}, token obtained`);
+  if (!token) throw new Error('User A registration failed');
 
   // 4. Test Paginated APIs
   const recipes = await request('/api/recipes?page=1&limit=5', 'GET', null, token);

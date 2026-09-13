@@ -258,13 +258,11 @@ FRONTEND_URL=http://localhost:5173
 ```
 *(Note: If `MONGODB_URI` is omitted during local development, backend automatically spins up an in-memory MongoDB session so you can test immediately without any local database daemon. In production, this fallback is strictly disabled and will fail fast).*
 
-Seed database with verified demo foods and history:
+Seed database with verified standard nutrition foods catalog:
 ```bash
 npm run seed
 ```
-Demo Credentials generated:
-- **Email**: `demo@nutripulse.com`
-- **Password**: `Password123!`
+New users can register directly via the registration screen (`/register`) and complete the personalized onboarding wizard.
 
 Start the backend server:
 ```bash

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, LogIn, Sparkles, AlertCircle } from 'lucide-react';
+import { Mail, Lock, LogIn, AlertCircle } from 'lucide-react';
 import { Card } from '../components/common/Card';
 import { Input } from '../components/common/Input';
 import { Button } from '../components/common/Button';
@@ -40,12 +40,6 @@ export const LoginPage = () => {
     }
   };
 
-  const fillDemoAccount = () => {
-    setEmail('demo@nutripulse.com');
-    setPassword('Password123!');
-    setError('');
-  };
-
   return (
     <div className="w-full max-w-md">
       <Card className="p-6 sm:p-8 space-y-6">
@@ -56,25 +50,6 @@ export const LoginPage = () => {
           <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
             Log in to continue your nutrition and fitness journey.
           </p>
-        </div>
-
-        {/* Demo Account Quick-Fill Card */}
-        <div className="p-3.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800/60 flex items-center justify-between">
-          <div className="space-y-0.5">
-            <span className="text-xs font-bold text-emerald-800 dark:text-emerald-300 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" /> Demo Account Ready
-            </span>
-            <p className="text-[11px] text-slate-500">
-              One-click auto-fill for instant review
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={fillDemoAccount}
-            className="text-xs font-bold px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white transition-colors"
-          >
-            Auto Fill
-          </button>
         </div>
 
         {error && (
